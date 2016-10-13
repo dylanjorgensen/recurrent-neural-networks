@@ -1,0 +1,747 @@
+---
+title: 06 - Recurrent Neural Networks (RNN)
+layout: post
+author: dylan
+permalink: /06---recurrent-neural-networks-(rnn)/
+source-id: 1W_EDQw2z7F5rL8MahZuyxp1gevoiuWsX8CNl87oUXNg
+published: true
+---
+**Visuals:**
+
+* [Robotic Animals](http://www.hongkiat.com/blog/photo-manipulation-26-excellent-photoshopped-robotic-animals/)
+
+**Resources:**
+
+* [Udacity: Deep Learning: Deep Models For Text and Sequences](https://www.udacity.com/course/viewer#!/c-ud730/l-6378983156/m-6383631760)
+
+* [DeepLearning.tv: Recurrent Neural Networks - Ep. 9 (Deep Learning SIMPLIFIED)](https://www.youtube.com/watch?v=_aCuOwF1ZjU&index=9&list=PLjJh1vlSEYgvGod9wWiydumYl8hOXixNu)
+
+* [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)
+
+* [Understanding LSTM Networks](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+
+* [RNNS IN TENSORFLOW, A PRACTICAL GUIDE AND UNDOCUMENTED FEATURES](http://www.wildml.com/2016/08/rnns-in-tensorflow-a-practical-guide-and-undocumented-features/#more-820)
+
+= Embeddings
+
+* Word embedding is the collective name for a set of language modeling and feature learning techniques in natural language processing (NLP) where words or phrases from the vocabulary are mapped to vectors of real numbers in a low-dimensional space relative to the vocabulary size ("continuous space").
+
+= protocol buffers
+
+* Protocol buffers are Google's language-neutral, platform-neutral, extensible mechanism for serializing structured data – think XML, but smaller, faster, and simpler.
+
+= Using tf.SequenceExample
+
+= Batching and Padding
+
+= RNN VS. DYNAMIC_RNN
+
+* Uses a while loop to take in different size sequences.
+
+* Always better to use dynamic_rnn() over rnn()
+
+* IMPORTANT NOTE: 
+
+    * Passing a sequence_length=[13,20] should be required when passing in sequences that are padded with zeros so the RNN knows where to stop calculating. We don't want it to calculate padding zeros. 
+
+Bidirectional Dynamic RNNs
+
+* When using a standard RNN to make predictions we are only taking the "past" into account. For certain tasks this makes sense (e.g. predicting the next word), but for some tasks like comprehending the meaning of a sentence we want to know the words to the left (past) and also the words to the right (future) into account when making a prediction. 
+
+* the bidirectional_dynamic_rnn is still undocumented, but it's preferred over the static bidirectional_rnn.
+
+RNN Cells and Cell Wrappers
+
+Masking the Loss
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_0.jpg)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_1.jpg)
+
+Placeholder
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_2.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_3.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_4.png)
+
+* * *
+
+
+# Overview
+
+* * *
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_5.jpg) = Recurrent Neural Networks (RNN)...
+
+* n/a
+
+    * A recurrent turtle network represents an RNNs.
+
+* [DeepLearning.net](https://www.youtube.com/watch?v=_aCuOwF1ZjU&list=PLjJh1vlSEYgvGod9wWiydumYl8hOXixNu&index=9)
+
+* RNNs work like a single shallow neural net that keeps adding hidden layers over time steps. This gives them two very useful properties, the ability to handle sequences and store memory.
+
+<table>
+  <tr>
+    <td></td>
+  </tr>
+</table>
+
+
+#### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_6.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_7.jpg) + Sequences…
+
+* n/a
+
+    * A robotic peacock in a sequence dress represents a RNN sequence. 
+
+* The first is that they work well with many types of sequential data problems like stock predictions, streaming video, speech recognition or image captioning.
+
+<table>
+  <tr>
+    <td>
+Especially on the Character level</td>
+    <td>
+Classify video frame by frame. </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>
+A singular impact with a sequence output can be image captioning.</td>
+    <td>
+The opposite can be used for document classification.</td>
+  </tr>
+</table>
+
+
+#### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_8.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_9.jpg) + Memory...
+
+* n/a
+
+    * A robotic elephant playing Sarah McLachlan's "Will You Remember Me" represents RNN memory 
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>The second is that they can have a sense of memory to which can help put context around predictions. </td>
+    <td>This reminds me of our working memory has a sense of persistence (look at the bird in the ___?) RNNs are networks with loops in them, allowing them to remember information over time.</td>
+    <td></td>
+  </tr>
+</table>
+
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_10.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_11.png)
+
+* * *
+
+
+## Configurations
+
+* * *
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_12.png) = Configurations...
+
+* [Two Minute Papers](https://www.youtube.com/watch?v=Jkkjy7dVdaY)
+
+* The deck area contains all the configurations.
+
+    * n/a
+
+* Because recurrent networks are a very natural way to model sequential data they can create a sequence as an output there are several problem configurations we can work with them in.
+
+<table>
+  <tr>
+    <td></td>
+  </tr>
+</table>
+
+
+#### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_13.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_14.jpg) + One to One…
+
+* n/a
+
+    * Kobe Bryant represents the concept of 1 to 1.
+
+#### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_15.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_16.jpg) + One to Many…
+
+* n/a
+
+    * Caption Kitty represents the concept of one too many.
+
+<table>
+  <tr>
+    <td></td>
+    <td>We can put in an image, and get out a sequence of words describing an image. </td>
+  </tr>
+</table>
+
+
+#### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_17.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_18.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_19.jpg) + Many to one...
+
+* Sitting on a cold bench are Siskel and Ebert watching a movie on a phone.
+
+    * Ebert giving a thumbs-up represents a many to one.
+
+<table>
+  <tr>
+    <td></td>
+    <td>We can put in multiple comments about a move and get back and single classification of what movie it is..</td>
+  </tr>
+</table>
+
+
+#### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_20.jpg) + Many to Many…
+
+* [Deep Recurrent Nets character generation demo](http://cs.stanford.edu/people/karpathy/recurrentjs/)
+
+* n/a
+
+    * Shakespeare a many to many relationship.
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>We can put in an english sentence, and get out a french sentence.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+* * *
+
+
+# Ideas
+
+* * *
+
+
+= Text Summarization
+
+* https://github.com/tensorflow/models/tree/master/textsum
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>Google open sources this. </td>
+  </tr>
+</table>
+
+
+= Generate Music
+
+* [https://magenta.tensorflow.org/welcome-to-magenta](https://magenta.tensorflow.org/welcome-to-magenta)
+
+* Magenta, a project from the Google Brain team that asks: Can we use machine learning to create compelling art and music?
+
+= Make Handwriting
+
+* [Graves Handwriting Demo](http://www.cs.toronto.edu/~graves/handwriting.html)
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+= Basketball Trajectories
+
+* [Rajiv Shah ](https://github.com/rajshah4?tab=repositories)
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+= English Voice
+
+* n/a
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_21.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_22.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_23.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_24.png)
+
+* * *
+
+
+# Sequences
+
+* * *
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_25.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_26.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_27.png) = Time Series...
+
+* [Udacity](https://www.udacity.com/course/viewer#!/c-ud730/l-6378983156/m-6377091961)
+
+* The peacock has many watches all around its
+
+    * A robot peacock in a sequence dress represents RNN sequences.
+
+    * An arm full of watches represents time series.
+
+* Now we work with a series over time (RNN) instead of space (CNN).
+
+<table>
+  <tr>
+    <td></td>
+    <td>Similar to how convolutional neural networks extract patterns across space, we can use a recurrent neural network to extract patterns across time. 
+
+This is how we can handle voice recognition and natural language data that have varying lengths?</td>
+  </tr>
+</table>
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_28.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_29.jpg) = Recursive Structure…
+
+* [Udacity](https://www.udacity.com/course/viewer#!/c-ud730/l-6378983156/m-6377091961)
+
+* There is parsley growing on all sides of the tunnel. It smells great in there. 
+
+    * Parsley represents the concept of recursion.
+
+* We can think of the RNN process as a recursive passage through time because it's like each time step gives us an additional hidden layer, and we use the output of the last one as the input of the next one.
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+#### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_30.jpg) + Recurrent Connection...
+
+* The peacock is trying to point at the flight monitors but his fingers are stuck in a finger trap 
+
+    * A connecting flight monitor represents recurrent connection.
+
+* A recurrent connections is a way for us to reach out to the last **state from the past**.
+
+<table>
+  <tr>
+    <td>
+Imagine that you have a sequence of events. At each timestep you want to make a decision based on what you've seen before..</td>
+    <td>
+We can use the state of a previous classifier as a summary of what happened before. (recursively)</td>
+  </tr>
+</table>
+
+
+#### + Iteration Vs. Recursion...
+
+* Iteration terminates when the loop-continuation condition fails
+
+* Recursion terminates when a base case is recognized.
+
+<table>
+  <tr>
+    <td>Iteration</td>
+    <td>Recursion</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_31.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_32.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_33.png)
+
+* * *
+
+
+# Memory
+
+* * *
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_34.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_35.jpg) = Persistent Cycle...
+
+* [Blog](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+
+* n/a
+
+    * A robotic elephant playing Sarah McLachlan's "Will You Remember Me" represents RNN memory 
+
+    * A robotic conveyor belt making miniature robot elephants represents the persistents cycle.
+
+* The directed cycles can creates an internal state of the network which allows it to exhibit dynamic temporal behavior.
+
+<table>
+  <tr>
+    <td>A recurrent neural network can be thought of as multiple copies of the same network, each passing a message to a successor. 
+
+Consider what happens if we unroll the loop.</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>This chain-like nature reveals that recurrent neural networks are intimately related to sequences and lists.</td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_36.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_37.jpg) = Short and Long Term Memory...
+
+* The hard-working boss of the robot assembly line is a bluebird.
+
+    * A bluebird in the sky represents short-term working memory.
+
+    * Birdhouse in the shape of the Eiffel Tower represent long-term working memory. 
+
+* In the case with france we need to go back into a much longer term memory to a time when we learned what language people speak in france.
+
+<table>
+  <tr>
+    <td>Short Term Working Memory</td>
+    <td></td>
+    <td>Long Term Working Memory</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>"Look at the bird in the ___."</td>
+    <td></td>
+    <td>“I grew up in France… so I speak fluent___.”</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_38.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_39.png)
+
+* * *
+
+
+## Problems
+
+* * *
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_40.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_41.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_42.jpg) = Back Propagation Problem....
+
+* [Blog](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+
+* The sequence robot peacock has a backpack with a bomb in it to open the door.
+
+    * n/a 
+
+* It quickly becomes overwhelming to compute the backpropagation for a recurrent networks because each time step is like a whole new layer added onto our net. 
+
+* This causes our gradient descent algorithm to either grow or shrink **out of control**.
+
+* There are surprisingly two different way to solve each of the two problems.
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_43.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_44.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_45.jpg) = Exploding Gradient Problem...
+
+* [Batman Vault](https://youtu.be/Yqvbv-SB4bg?t=1m51s)
+
+* A bomb is suppose to blasts the door open but instead creates a Great Clips.
+
+    * An exploding cheese grader bomb the exploding gradient problem.
+
+    * Great clips represents gradient clipping.
+
+* To solve exploding gradient we use **gradient clipping**.
+
+<table>
+  <tr>
+    <td></td>
+    <td>We can solve exploding gradients with a simple hack call gradient clipping.
+
+We compute the norm, then keep shrinking the steps as the norm grows to big.</td>
+  </tr>
+</table>
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_46.jpg) = Vanishing Gradient Problem...
+
+* The Invisible Man is getting his haircut then when the woman takes off his hat and she can't see you where his hair is.
+
+    * The Invisible Man represents the vanishing gradient problem.
+
+* The more tricky problem to fix is vanishing gradients, because these make it so our model forget the more distant past. 
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>
+There are several solutions we can use.</td>
+  </tr>
+</table>
+
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_47.jpg)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_48.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_49.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_50.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_51.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_52.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_53.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_54.png)
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_55.png)
+
+* * *
+
+
+## Gating
+
+* * *
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_56.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_57.png) = Gating…
+
+* n/a
+
+    * This security door represents a gating techniques. 
+
+* Gating is a technique that helps the net decide when to forget the current input and when to remember it for future time steps. 
+
+<table>
+  <tr>
+    <td></td>
+    <td>The most popular gating solutions methods include LSTM and GRU.
+
+Besides gating there are also other techniques like gradient clipping, better optimizers, and steeper gates.</td>
+  </tr>
+  <tr>
+    <td>
+And RNN consists of many simple units like this.</td>
+    <td>
+LSTM will replace the neural network unit's guts.</td>
+  </tr>
+</table>
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_58.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_59.jpg) = Logistic Regression of Gate Values…
+
+* n/a
+
+    * Oceanic flight debris represents regression. 
+
+<table>
+  <tr>
+    <td></td>
+    <td>The gate values for each gate are controlled but a tiny logistic regression on the input parameters.
+
+
+Is also a hyperbolic tangent sprinkled in there to keep the outputs between -1,1</td>
+  </tr>
+</table>
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_60.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_61.png) = Long Short Term Memory (LSTM)...
+
+* [Understanding LSTMs](http://colah.github.io/posts/2015-08-Understanding-LSTMs/) | [Udacity](https://www.udacity.com/course/viewer#!/c-ud730/l-6378983156/m-6372267613)
+
+* n/a
+
+    * A long spinny toy sticking out of a listerine bottle represents long short term memory.
+
+* Long Short Term Memory networks – usually just called "LSTMs" – are a special kind of RNN, explicitly designed to avoid the long-term dependency problem. 
+
+<table>
+  <tr>
+    <td></td>
+    <td>The Conveyor Belt of Info:
+
+It's that the cell state is kind of like a conveyor belt. It runs straight down the entire chain, with only some minor linear interactions. 
+
+It’s very easy for information to just flow along it unchanged.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>The LSTM does have the ability to remove or add information to the cell state, carefully regulated by structures called gates.
+
+Gates are a way to optionally let information through. They are composed out of a sigmoid neural net layer and a pointwise multiplication operation.
+</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+####  + How LSTM Models Memory...
+
+* The Fancy Feast cat is playing the piano in the corner. 
+
+    * Fancy Feast cat represents differentiation.
+
+* LSTM help RNN's memorize things better because it uses a continuous regression logic gates that can be differentiated, hence better backpropagation.
+
+<table>
+  <tr>
+    <td></td>
+    <td>M = Memory = A matrix of values
+
+X = Write = Behind gate
+
+y = Read = Behind gate
+
+Forget = Behind gate</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>When a gate is closed you multiply the incoming matrix by 0 to erase it. 
+
+When a gate is open you multiply it by 1 to keep everything the same. </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>
+Now imagine instead of having multiplying by a yes/no binary gate, we instead have a continuous input.
+
+So anything 0 < x > 1 can be partially added to memory.
+
+</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>The interesting thing about having a multiplicative factor as a continuous function is that it's differentiable.
+
+This also means we can backpropagate through it. 
+
+That is what LSTM is. </td>
+  </tr>
+</table>
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_62.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_63.jpg) = LSTM Regularization…
+
+* [Stack Exchange](http://stats.stackexchange.com/questions/4961/what-is-regularization-in-plain-english)
+
+* n/a
+
+    * The great fruit represents the concept of regularization. 
+
+* In simple terms, regularization is tuning or selecting the preferred level of model complexity so your models are better at predicting (generalizing). If you don't do this your models may be too complex and overfit or too simple and underfit, either way giving poor predictions.
+
+<table>
+  <tr>
+    <td></td>
+    <td>We can use L2 on any regression gate but...
+
+We should only use dropout on the x and y gate only. NOT on the past or future gate.</td>
+  </tr>
+</table>
+
+
+![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_64.jpg)
+
+* * *
+
+
+# Attention
+
+* * *
+
+
+### ![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_65.jpg)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_66.png)![image alt text]({{ site.url }}/public/0D0UrKCmxrzbLFGy2JLw_img_67.png) = Attention...
+
+* n/a
+
+    * A Raptor from Jurassic Park represents the concept of attention. 
+
+* LSTMs were a big step in what we can accomplish with RNNs. It's natural to wonder: is there another big step? A common opinion among researchers is: "Yes! There is a next step and it’s attention!" 
+
+* The idea is to let every step of an RNN pick information to look at from some larger collection of information. For example, if you are using an RNN to create a caption describing an image, it might pick a part of the image to look at for every word it outputs. In fact, Xu, et al. (2015) do exactly this – it might be a fun starting point if you want to explore attention! There's been a number of really exciting results using attention, and it seems like a lot more are around the corner…
+
